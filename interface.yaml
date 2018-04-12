@@ -1,0 +1,4 @@
+name: kubernetes-helm
+summary: Interface for kubernetes-helm
+version: 1
+repo: https://github.com/tengu-team/interface-kubernetes-helm.git
