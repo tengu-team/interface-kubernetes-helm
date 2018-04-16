@@ -26,12 +26,10 @@ class KubernetesHelmProvides(Endpoint):
         """
         Return all juju_app :
         {
-            'model_uuid_unit_name': {
-                'charts': [{
+            'model_uuid_unit_name':[{
                     'name': 'chart_name',
                     'repo': 'http://10.10.138.60:1323/charts/'
                 }],
-            }
         }
         """
         chart_requests = {}
@@ -42,17 +40,14 @@ class KubernetesHelmProvides(Endpoint):
                     requests.extend(unit.received['chart_requests'])
             if requests:
                 uuid = unit.received['uuid']
-                chart_requests[uuid] ={
-                    'charts': requests
-                } 
+                chart_requests[uuid] = requests
         return chart_requests
 
     def send_status(self, status):
         """
         Return chart deployment status.
         """
-        # TODO TEST IF ONE TO ONE COMMUNICATION WORKS
         for relation in self.relations:
-            unit = relation.unit[0]
+            unit = relation.units[0]
             uuid = unit.received['uuid']
             relation.to_publish['charts_status'] = status[uuid]
