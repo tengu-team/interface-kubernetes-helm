@@ -21,6 +21,7 @@ class KubernetesHelmProvides(Endpoint):
     @when('endpoint.{endpoint_name}.changed.chart_requests')
     def changed(self):
         set_flag(self.expand_name('new-chart-requests'))
+        clear_flag(self.expand_name('changed.chart_requests'))
 
     def get_chart_requests(self):
         """
