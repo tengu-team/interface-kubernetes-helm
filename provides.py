@@ -25,7 +25,7 @@ class KubernetesHelmProvides(Endpoint):
 
     def get_chart_requests(self):
         """
-        Return all juju_app :
+        Return all chart requests in the following format:
         {
             'model_uuid_unit_name':[{
                     'name': 'chart_name',
@@ -46,7 +46,7 @@ class KubernetesHelmProvides(Endpoint):
 
     def send_status(self, status):
         """
-        Return chart deployment status.
+        Send chart deployment status.
         """
         for relation in self.relations:
             unit = relation.units[0]
