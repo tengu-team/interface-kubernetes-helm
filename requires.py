@@ -48,6 +48,15 @@ class KubernetesHelmRequires(Endpoint):
         return status
 
     def get_uuid(self):
-        unit_name = os.environ['JUJU_UNIT_NAME']
+        unit_name = os.environ['JUJU_UNIT_NAME'].split('/')[0]
         model_uuid = os.environ['JUJU_MODEL_UUID']
         return model_uuid + '_' + unit_name
+
+    def subscribe_status_update(self):
+        for relation in self.relations:
+            relation.to_publish['status_update_request'] = "sub"
+            relation.to_publish['uuid'] = self.get_uuid()
+
+    def unsubscribe_status_update(self):
+        for relation in self.relations:
+            relation.to_publish['status_update_request'] = "unsub"

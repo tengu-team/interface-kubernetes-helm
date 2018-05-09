@@ -23,6 +23,15 @@ class KubernetesHelmProvides(Endpoint):
         set_flag(self.expand_name('new-chart-requests'))
         clear_flag(self.expand_name('changed.chart_requests'))
 
+
+    @when('endpoint.{endpoint_name}.changed.status_update_request')
+    def status_update_request(self):
+        clear_flag(self.expand_name('changed.status_update_request'))
+        if self.get_status_update_subscribers():
+            set_flag(self.expand_name('status-update'))
+        else:
+            clear_flag(self.expand_name('status-update'))
+
     def get_chart_requests(self):
         """
         Return all chart requests in the following format:
@@ -51,4 +60,13 @@ class KubernetesHelmProvides(Endpoint):
         for relation in self.relations:
             unit = relation.units[0]
             uuid = unit.received['uuid']
-            relation.to_publish['charts_status'] = status[uuid]
+            if uuid in status:
+                relation.to_publish['charts_status'] = status[uuid]
+
+    def get_status_update_subscribers(self):
+        units = {}
+        for relation in self.relations:            
+            for unit in relation.units:
+                if unit.received['status_update_request'] == "sub":
+                    units[unit.received['uuid']] = ""
+        return units.keys()
