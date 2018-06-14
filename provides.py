@@ -1,5 +1,6 @@
 from charms.reactive import (
     when,
+    when_any,
     when_not,
     set_flag,
     clear_flag,
@@ -18,10 +19,16 @@ class KubernetesHelmProvides(Endpoint):
     def helm_broken(self):
         clear_flag(self.expand_name('available'))
 
-    @when('endpoint.{endpoint_name}.changed.chart_requests')
+    # Remove departed flag when issue 
+    # https://github.com/juju-solutions/charms.reactive/issues/170
+    # is resolved
+    @when_any('endpoint.{endpoint_name}.changed.chart_requests',
+              'endpoint.{endpoint_name}.departed')
     def changed(self):
         set_flag(self.expand_name('new-chart-requests'))
         clear_flag(self.expand_name('changed.chart_requests'))
+        clear_flag(self.expand_name('departed'))
+
 
 
     @when('endpoint.{endpoint_name}.changed.status_update_request')
